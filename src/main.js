@@ -9,15 +9,19 @@ import Spinner from "./components/spinner.vue";
 // import { DatePicker } from "v-calendar";
 import DatePicker from "vue2-datepicker";
 import "vue2-datepicker/index.css";
+import axios from "axios";
+import { initializeApp } from "firebase/app";
+import Alert from "./components/alert.vue";
 
 Vue.config.productionTip = false;
+Vue.prototype.$axios = axios;
 Vue.use(BootstrapVue);
 Vue.use(IconsPlugin);
 Vue.component("Spinner", Spinner);
+Vue.component("Alert", Alert);
 Vue.component("DatePicker", DatePicker);
 
 // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 

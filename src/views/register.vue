@@ -5,15 +5,15 @@
         <section class="forms">
           <h2>Register Your Account</h2>
           <b-form-group
-            id="username-input"
-            label="Username :"
-            label-for="username-input"
+            id="email-input"
+            label="Email :"
+            label-for="email-input"
           >
             <b-form-input
-              id="username-input"
-              type="text"
-              placeholder="Username..."
-              v-model="data.username"
+              id="email-input"
+              type="email"
+              placeholder="Email"
+              v-model="data.email"
             ></b-form-input>
           </b-form-group>
 
@@ -25,54 +25,26 @@
             <b-form-input
               id="password-input"
               type="password"
-              placeholder="Password..."
+              placeholder="Password"
               v-model="data.password"
             ></b-form-input>
           </b-form-group>
 
-          <b-form-group
-            id="name-input"
-            label="Full Name :"
-            label-for="name-input"
-          >
-            <b-form-input
-              id="name-input"
-              type="text"
-              placeholder="Full Name..."
-              v-model="data.name"
-            ></b-form-input>
-          </b-form-group>
-
-          <b-form-group
-            id="dob-input"
-            label="Date of Birth :"
-            label-for="dob-input"
-          >
-            <DatePicker
-              v-model="data.dob"
-              type="date"
-              placeholder="Select datetime"
-              format="DD-MM-YYYY"
-              style="width: 100%"
-            />
-          </b-form-group>
-
-          <b-button
-            :disabled="loading"
-            variant="primary"
-            @click="$router.push('/')"
-          >
+          <b-button :disabled="loading" variant="primary" @click="onRegis">
             <span v-if="!loading">Login</span>
             <Spinner v-else />
           </b-button>
         </section>
       </b-col>
     </b-row>
+    <Alert :show="show" :msg="msg" :variant="variant" />
   </b-container>
 </template>
 
 <script>
 import moment from "moment";
+import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
+
 const local = moment.locale("id");
 
 export default {
@@ -80,13 +52,47 @@ export default {
     return {
       locale: local,
       loading: false,
+      show: false,
+      msg: "",
+      variant: "",
       data: {
-        username: "",
+        email: "",
         password: "",
         name: "",
         dob: "",
       },
     };
+  },
+  methods: {
+    onRegis() {
+      let vm = this;
+      vm.loading = true;
+
+      createUserWithEmailAndPassword(getAuth(), vm.data.email, vm.data.password)
+        .then((res) => {
+          if (res.user.accessToken) {
+            vm.variant = "success";
+            vm.msg = "Register Succeeded! You Will Be Redirected In 3 secs";
+            vm.show = true;
+            vm.loading = false;
+
+            setTimeout(() => {
+              vm.show = false;
+              vm.$router.push("/");
+            }, 3000);
+          }
+        })
+        .catch((err) => {
+          vm.variant = "danger";
+          vm.msg = err.message;
+          vm.show = true;
+
+          setTimeout(() => {
+            vm.show = false;
+          }, 3000);
+          vm.loading = false;
+        });
+    },
   },
 };
 </script>
@@ -100,5 +106,13 @@ export default {
 }
 .forms h2 {
   margin-bottom: 4%;
+}
+.alert {
+  margin: auto;
+  position: absolute;
+  width: 30%;
+  left: 0;
+  right: 0;
+  bottom: 25%;
 }
 </style>

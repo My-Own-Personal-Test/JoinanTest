@@ -15,7 +15,7 @@
         <b-row>
           <b-col offset="10">
             <section style="padding-top: 14px">
-              <b-button variant="danger">Logout</b-button>
+              <b-button variant="danger" @click="logOut">Logout</b-button>
             </section>
           </b-col>
         </b-row>
@@ -100,6 +100,8 @@
 import ModalEdit from "./modalEdit";
 import ModalDelete from "./modalDelete";
 import ModalAdd from "./modalAdd";
+import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
+const auth = getAuth();
 
 const fields = [
   {
@@ -158,13 +160,31 @@ export default {
       filterOn: [],
       tableBusy: false,
       user: "",
+      isLoggedIn: false,
     };
+  },
+  mounted() {
+    let vm = this;
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        vm.isLoggedIn = true;
+      } else {
+        vm.isLoggedIn = false;
+      }
+    });
   },
   methods: {
     onFiltered(filteredItems) {
       // Trigger pagination to update the number of buttons/pages due to filtering
       this.totalRows = filteredItems.length;
       this.currentPage = 1;
+    },
+    logOut() {
+      signOut(auth).then(() => {
+        this.isLoggedIn = false;
+        this.$router.replace("/");
+      });
     },
   },
 };

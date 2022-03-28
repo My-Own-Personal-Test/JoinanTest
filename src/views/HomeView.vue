@@ -31,7 +31,7 @@
           <b-button
             :disabled="loading"
             variant="primary"
-            @click="$router.push('/register')"
+            @click="$router.push('/userLists')"
           >
             <span v-if="!loading">Login</span>
             <Spinner v-else />

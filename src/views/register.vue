@@ -3,6 +3,7 @@
     <b-row align-h="center">
       <b-col md="6" lg="6" xl="6">
         <section class="forms">
+          <h2>Register Your Account</h2>
           <b-form-group
             id="username-input"
             label="Username :"
@@ -15,6 +16,7 @@
               v-model="data.username"
             ></b-form-input>
           </b-form-group>
+
           <b-form-group
             id="password-input"
             label="Password :"
@@ -28,10 +30,37 @@
             ></b-form-input>
           </b-form-group>
 
+          <b-form-group
+            id="name-input"
+            label="Full Name :"
+            label-for="name-input"
+          >
+            <b-form-input
+              id="name-input"
+              type="text"
+              placeholder="Full Name..."
+              v-model="data.name"
+            ></b-form-input>
+          </b-form-group>
+
+          <b-form-group
+            id="dob-input"
+            label="Date of Birth :"
+            label-for="dob-input"
+          >
+            <DatePicker
+              v-model="data.dob"
+              type="date"
+              placeholder="Select datetime"
+              format="DD-MM-YYYY"
+              style="width: 100%"
+            />
+          </b-form-group>
+
           <b-button
             :disabled="loading"
             variant="primary"
-            @click="$router.push('/register')"
+            @click="$router.push('/')"
           >
             <span v-if="!loading">Login</span>
             <Spinner v-else />
@@ -43,13 +72,19 @@
 </template>
 
 <script>
+import moment from "moment";
+const local = moment.locale("id");
+
 export default {
   data() {
     return {
+      locale: local,
       loading: false,
       data: {
         username: "",
         password: "",
+        name: "",
+        dob: "",
       },
     };
   },
@@ -62,5 +97,8 @@ export default {
   display: flex;
   flex-direction: column;
   justify-content: center;
+}
+.forms h2 {
+  margin-bottom: 4%;
 }
 </style>

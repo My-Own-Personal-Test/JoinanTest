@@ -28,21 +28,20 @@
             ></b-form-input>
           </b-form-group>
 
-          <b-button
-            :disabled="loading"
-            variant="primary"
-            @click="$router.push('/userLists')"
-          >
+          <b-button :disabled="loading" variant="primary" @click="login">
             <span v-if="!loading">Login</span>
             <Spinner v-else />
           </b-button>
         </section>
       </b-col>
     </b-row>
+    <Alert :show="show" :msg="msg" :variant="variant" />
   </b-container>
 </template>
 
 <script>
+import axios from "@/baseURL";
+import lodash from "lodash";
 export default {
   data() {
     return {
@@ -51,7 +50,32 @@ export default {
         username: "",
         password: "",
       },
+      msg: "",
+      variant: "",
+      show: false,
     };
+  },
+  methods: {
+    async login() {
+      let vm = this;
+      vm.loading = true;
+
+      let postLogin = await axios.post("user/login", vm.data);
+
+      if (postLogin.data.message === "sukses") {
+        vm.loading = false;
+        vm.$router.push("/users/list");
+      } else {
+        vm.loading = false;
+        vm.msg = lodash.toUpper(postLogin.data.message);
+        vm.variant = "danger";
+        vm.show = true;
+
+        setTimeout(() => {
+          vm.show = false;
+        }, 3000);
+      }
+    },
   },
 };
 </script>
@@ -62,5 +86,13 @@ export default {
   display: flex;
   flex-direction: column;
   justify-content: center;
+}
+.alert {
+  margin: auto;
+  position: absolute;
+  width: 30%;
+  left: 0;
+  right: 0;
+  bottom: 25%;
 }
 </style>

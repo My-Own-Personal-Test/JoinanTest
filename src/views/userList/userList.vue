@@ -92,6 +92,7 @@
     <ModalEdit :data="data" @alertFromChild="triggerAlert($event)" />
     <ModalDelete :data="data" @alertFromChild="triggerAlert($event)" />
     <ModalAdd @alertFromChild="triggerAlert($event)" />
+    <ModalLogout />
   </b-container>
 </template>
 
@@ -99,6 +100,7 @@
 import ModalEdit from "./modalEdit";
 import ModalDelete from "./modalDelete";
 import ModalAdd from "./modalAdd";
+import ModalLogout from "./modalLogout";
 import axios from "@/baseURL";
 // import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 // import {db} from '../../firebaseInit'
@@ -142,6 +144,7 @@ export default {
     ModalEdit,
     ModalDelete,
     ModalAdd,
+    ModalLogout,
   },
   data() {
     return {
@@ -184,7 +187,9 @@ export default {
       this.totalRows = filteredItems.length;
       this.currentPage = 1;
     },
-    logOut() {},
+    logOut() {
+      this.$bvModal.show("modalLogout");
+    },
     async getData() {
       try {
         let vm = this;

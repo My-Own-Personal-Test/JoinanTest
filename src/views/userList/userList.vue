@@ -56,8 +56,7 @@
                     variant="warning"
                     class="mr-1"
                     title="'Edit Data'"
-                    v-b-modal.modalEdit
-                    @click="(data = item.item), (edit = !edit)"
+                    @click="openEdit(item.item)"
                     ><b-icon icon="pencil-fill" />
                   </b-button>
 
@@ -88,9 +87,10 @@
             </section>
           </b-col>
         </b-row>
+        <Alert :show="show" :variant="variant" :msg="msg" />
       </b-col>
     </b-row>
-    <ModalEdit />
+    <ModalEdit :data="data" @alertFromChild="triggerAlert($event)" />
     <ModalDelete :user="user" />
     <ModalAdd />
   </b-container>
@@ -100,6 +100,7 @@
 import ModalEdit from "./modalEdit";
 import ModalDelete from "./modalDelete";
 import ModalAdd from "./modalAdd";
+import axios from "@/baseURL";
 // import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 // import {db} from '../../firebaseInit'
 
@@ -114,7 +115,7 @@ const fields = [
     class: "table-number text-center",
   },
   {
-    key: "name",
+    key: "nama",
     label: "Full Name",
     sortable: true,
     sortDirection: "desc",
@@ -122,6 +123,12 @@ const fields = [
   {
     key: "username",
     label: "Username",
+    sortable: true,
+    sortDirection: "desc",
+  },
+  {
+    key: "email",
+    label: "Email",
     sortable: true,
     sortDirection: "desc",
   },
@@ -140,19 +147,12 @@ export default {
   data() {
     return {
       fields,
-      showing: false,
       edit: false,
       variant: "success",
       msg: "",
       loker: "",
-      data: "",
-      items: [
-        {
-          no: 1,
-          name: "Name",
-          username: "username",
-        },
-      ],
+      data: {},
+      items: [],
       fields: fields,
       totalRows: 1,
       currentPage: 1,
@@ -162,6 +162,9 @@ export default {
       filterOn: [],
       tableBusy: false,
       user: "",
+      msg: "",
+      show: false,
+      variant: "",
       // isLoggedIn: false,
     };
   },
@@ -179,12 +182,58 @@ export default {
   },
   methods: {
     onFiltered(filteredItems) {
-      // Trigger pagination to update the number of buttons/pages due to filtering
       this.totalRows = filteredItems.length;
       this.currentPage = 1;
     },
     logOut() {},
-    async getData() {},
+    async getData() {
+      try {
+        let vm = this;
+        vm.tableBusy = true;
+
+        let get = await axios.get("user/ALL", {
+          headers: {
+            token: localStorage.getItem("token"),
+          },
+        });
+
+        if (get.data.message === "sukses" && get.data.data.length > 0) {
+          vm.tableBusy = false;
+          vm.items = get.data.data;
+          vm.totalRows = vm.items.length;
+
+          for (let index = 0; index < vm.items.length; index++) {
+            vm.items[index].no = index + 1;
+          }
+        }
+      } catch (error) {
+        vm.tableBusy = false;
+        vm.msg = "GANGGUAN KONEKSI PADA SERVER! COBA BEBERAPA SAAT LAGI";
+        vm.variant = "danger";
+        vm.show = true;
+
+        setTimeout(() => {
+          vm.show = false;
+        }, 3000);
+      }
+    },
+    openEdit(item) {
+      this.data = item;
+      if (this.data != {}) {
+        console.log(this.data);
+        this.$bvModal.show("modalEdit");
+      }
+    },
+    triggerAlert(payload) {
+      let vm = this;
+      vm.msg = payload.msg;
+      vm.variant = payload.variant;
+      vm.show = payload.show;
+      vm.getData();
+      setTimeout(() => {
+        vm.show = false;
+      }, 3000);
+    },
   },
 };
 </script>
@@ -200,5 +249,13 @@ export default {
   padding-bottom: 3%;
   display: flex;
   padding-left: 5%;
+}
+.alert {
+  margin: auto;
+  position: absolute;
+  width: 32%;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 </style>

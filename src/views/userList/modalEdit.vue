@@ -17,6 +17,7 @@
           id="username-input"
           type="text"
           placeholder="Username"
+          disabled
           v-model="data.username"
         ></b-form-input>
       </b-form-group>
@@ -30,7 +31,7 @@
           id="password-input"
           type="password"
           placeholder="Password"
-          v-model="data.password"
+          v-model="password"
         ></b-form-input>
       </b-form-group>
 
@@ -39,7 +40,7 @@
           id="name-input"
           type="text"
           placeholder="Full Name"
-          v-model="data.name"
+          v-model="data.nama"
         ></b-form-input>
       </b-form-group>
 
@@ -48,13 +49,12 @@
         label="Date of Birth :"
         label-for="dob-input"
       >
-        <DatePicker
-          v-model="data.dob"
-          type="date"
-          placeholder="Select datetime"
-          format="DD-MM-YYYY"
-          style="width: 100%"
-        />
+        <b-form-input
+          id="name-input"
+          type="text"
+          placeholder="Email"
+          v-model="data.email"
+        ></b-form-input>
       </b-form-group>
     </section>
 
@@ -72,6 +72,7 @@
         size="sm"
         style="width: 80px"
         variant="primary"
+        @click="doEdit"
       >
         <span v-if="!loading">Edit</span>
         <Spinner v-else />
@@ -81,21 +82,69 @@
 </template>
 
 <script>
-import moment from "moment";
-const local = moment.locale("id");
-
+import axios from "@/baseURL";
+import lodash from "lodash";
 export default {
+  props: {
+    data: {
+      type: Object,
+    },
+  },
   data() {
     return {
-      locale: local,
       loading: false,
-      data: {
-        username: "",
-        password: "",
-        name: "",
-        dob: "",
-      },
+      password: "",
     };
+  },
+  methods: {
+    async doEdit() {
+      let vm = this;
+      vm.loading = true;
+      let dataSend = {};
+
+      if (vm.password != "") {
+        dataSend.username = vm.data.username;
+        dataSend.email = vm.data.email;
+        dataSend.nama = vm.data.nama;
+        dataSend.password = vm.password;
+      } else {
+        dataSend.username = vm.data.username;
+        dataSend.email = vm.data.email;
+        dataSend.nama = vm.data.nama;
+      }
+
+      try {
+        let editRes = await axios.post("user/update", dataSend, {
+          headers: {
+            token: localStorage.getItem("token"),
+          },
+        });
+
+        if (editRes.data.message === "sukses") {
+          vm.$emit("alertFromChild", {
+            msg: "Edit Account Succeeded!",
+            variant: "success",
+            show: true,
+          });
+          vm.loading = false;
+          vm.$bvModal.hide("modalEdit");
+        } else {
+          vm.$emit("alertFromChild", {
+            msg: lodash.toUpper(editRes.data.message),
+            variant: "success",
+            show: true,
+          });
+          vm.loading = false;
+        }
+      } catch (error) {
+        vm.$emit("alertFromChild", {
+          msg: error.message,
+          variant: "success",
+          show: true,
+        });
+        vm.loading = false;
+      }
+    },
   },
 };
 </script>

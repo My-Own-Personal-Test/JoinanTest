@@ -45,16 +45,16 @@ const router = new VueRouter({
 //   });
 // };
 
-// router.beforeEach(async (to, from, next) => {
-//   if (to.matched.some((record) => record.meta.requiresAuth)) {
-//     if (await getCurrentUser()) {
-//       next();
-//     } else {
-//       next("/");
-//     }
-//   } else {
-//     next();
-//   }
-// });
+router.beforeEach(async (to, from, next) => {
+  if (to.matched.some((record) => record.meta.requiresAuth)) {
+    if (localStorage.getItem("token")) {
+      next();
+    } else {
+      next("/");
+    }
+  } else {
+    next();
+  }
+});
 
 export default router;

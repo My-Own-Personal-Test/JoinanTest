@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.3](https://github.com/My-Own-Personal-Test/JoinanTest/compare/v0.1.2...v0.1.3) (2022-03-29)
+
+
+### Features
+
+* add modal logout ([71b1bfc](https://github.com/My-Own-Personal-Test/JoinanTest/commit/71b1bfcc04b0ec3b24b1f05471d35328bca6bcd5))
+* add side bar items ([e241914](https://github.com/My-Own-Personal-Test/JoinanTest/commit/e24191427ba380d36426d7521c5cd8dc9b79c3c5))
+
 ### [0.1.2](https://github.com/My-Own-Personal-Test/JoinanTest/compare/v0.1.1...v0.1.2) (2022-03-29)
 
 

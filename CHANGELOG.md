@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.4](https://github.com/My-Own-Personal-Test/JoinanTest/compare/v0.1.3...v0.1.4) (2022-03-29)
+
+
+### Features
+
+* re-add routing guard ([ac4c744](https://github.com/My-Own-Personal-Test/JoinanTest/commit/ac4c744d9af3a047b99967cc4bdf17f84e644d91))
+
 ### [0.1.3](https://github.com/My-Own-Personal-Test/JoinanTest/compare/v0.1.2...v0.1.3) (2022-03-29)
 
 

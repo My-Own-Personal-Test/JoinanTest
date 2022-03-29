@@ -91,7 +91,7 @@
     </b-row>
     <ModalEdit :data="data" @alertFromChild="triggerAlert($event)" />
     <ModalDelete :data="data" @alertFromChild="triggerAlert($event)" />
-    <ModalAdd />
+    <ModalAdd @alertFromChild="triggerAlert($event)" />
   </b-container>
 </template>
 

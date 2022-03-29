@@ -39,22 +39,17 @@
           id="name-input"
           type="text"
           placeholder="Full Name"
-          v-model="data.name"
+          v-model="data.nama"
         ></b-form-input>
       </b-form-group>
 
-      <b-form-group
-        id="dob-input"
-        label="Date of Birth :"
-        label-for="dob-input"
-      >
-        <DatePicker
-          v-model="data.dob"
-          type="date"
-          placeholder="Select datetime"
-          format="DD-MM-YYYY"
-          style="width: 100%"
-        />
+      <b-form-group id="dob-input" label="Email :" label-for="email-input">
+        <b-form-input
+          id="email-input"
+          type="text"
+          placeholder="Email"
+          v-model="data.email"
+        ></b-form-input>
       </b-form-group>
     </section>
 
@@ -72,6 +67,7 @@
         size="sm"
         style="width: 80px"
         variant="primary"
+        @click="onRegis"
       >
         <span v-if="!loading">Edit</span>
         <Spinner v-else />
@@ -81,21 +77,58 @@
 </template>
 
 <script>
-import moment from "moment";
-const local = moment.locale("id");
+import axios from "@/baseURL";
+import lodash from "lodash";
+// import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
 
 export default {
   data() {
     return {
-      locale: local,
       loading: false,
+      show: false,
+      msg: "",
+      variant: "",
       data: {
         username: "",
         password: "",
-        name: "",
-        dob: "",
+        nama: "",
+        email: "",
       },
     };
+  },
+  methods: {
+    async onRegis() {
+      let vm = this;
+      vm.loading = true;
+
+      try {
+        let regis = await axios.post("user/register", vm.data);
+        vm.loading = false;
+
+        if (regis.data.message === "sukses") {
+          vm.$emit("alertFromChild", {
+            variant: "success",
+            msg: "Add New Account Succeeded!",
+            show: true,
+          });
+          vm.loading = false;
+          vm.$bvModal.hide("modalAdd");
+        } else {
+          vm.$emit("alertFromChild", {
+            variant: "danger",
+            msg: lodash.toUpper(regis.data.message),
+            show: true,
+          });
+          vm.loading = false;
+        }
+      } catch (error) {
+        vm.$emit("alertFromChild", {
+          variant: "danger",
+          msg: lodash.toUpper(error.message),
+          show: true,
+        });
+      }
+    },
   },
 };
 </script>

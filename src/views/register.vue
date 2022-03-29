@@ -109,7 +109,13 @@ export default {
           vm.loading = false;
         }
       } catch (error) {
-        console.log(error);
+        vm.variant = "danger";
+        vm.msg = error.message;
+        vm.show = true;
+
+        setTimeout(() => {
+          vm.show = false;
+        }, 3000);
       }
     },
     // onRegis() {

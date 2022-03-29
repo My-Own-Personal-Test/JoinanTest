@@ -8,8 +8,13 @@
           :visible="true"
           :no-header-close="true"
           width="400px"
-          bg-variant="dark"
-        ></b-sidebar>
+          title="Joinan Test"
+        >
+          <section class="sideBar">
+            <router-link to="/">Dashboard</router-link>
+            <router-link to="/userLists">User List</router-link>
+          </section>
+        </b-sidebar>
       </b-col>
       <b-col md="9" lg="9" xl="9">
         <b-row>
@@ -266,5 +271,20 @@ export default {
   left: 0;
   right: 0;
   bottom: 0;
+}
+.sideBar {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  font-size: 20px;
+}
+.sideBar a {
+  text-decoration: none;
+  color: black;
+  margin-bottom: 4%;
+}
+.sideBar a:hover {
+  color: rgb(66, 120, 238);
 }
 </style>

@@ -6,7 +6,7 @@
     header-bg-variant="danger"
     header-text-variant="light"
   >
-    <p class="my-4">{{ `Are you sure want to delete user ${user}!` }}</p>
+    <p class="my-4">{{ `Are you sure want to delete user ${data.nama}?` }}</p>
 
     <template #modal-footer>
       <b-button
@@ -22,7 +22,7 @@
         size="sm"
         style="width: 80px"
         variant="danger"
-        @click="ok"
+        @click="deleteUser"
       >
         <span v-if="!loading">Delete</span>
         <Spinner v-else />
@@ -32,11 +32,13 @@
 </template>
 
 <script>
+import axios from "@/baseURL";
+import lodash from "lodash";
+
 export default {
   props: {
-    user: {
-      type: String,
-      required: true,
+    data: {
+      type: Object,
     },
   },
   data() {
@@ -45,8 +47,44 @@ export default {
     };
   },
   methods: {
-    ok() {
-      console.log("asu");
+    async deleteUser() {
+      let vm = this;
+      vm.loading = true;
+
+      try {
+        let deleteRes = await axios.post(
+          "user/delete",
+          { id: vm.data.id },
+          {
+            headers: {
+              token: localStorage.getItem("token"),
+            },
+          }
+        );
+        if (deleteRes.data.message === "sukses") {
+          vm.$emit("alertFromChild", {
+            msg: "Delete Account Succeeded!",
+            variant: "success",
+            show: true,
+          });
+          vm.loading = false;
+          vm.$bvModal.hide("modalDelete");
+        } else {
+          vm.$emit("alertFromChild", {
+            msg: lodash.toUpper(deleteRes.data.message),
+            variant: "danger",
+            show: true,
+          });
+          vm.loading = false;
+        }
+      } catch (error) {
+        vm.$emit("alertFromChild", {
+          msg: error.message,
+          variant: "danger",
+          show: true,
+        });
+        vm.loading = false;
+      }
     },
   },
 };

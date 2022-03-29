@@ -64,8 +64,7 @@
                     variant="danger"
                     class="mr-1"
                     title="'Hapus Data'"
-                    v-b-modal.modalDelete
-                    @click="user = item.item.name"
+                    @click="openDelete(item.item)"
                     ><b-icon icon="trash-fill" />
                   </b-button>
                 </template>
@@ -91,7 +90,7 @@
       </b-col>
     </b-row>
     <ModalEdit :data="data" @alertFromChild="triggerAlert($event)" />
-    <ModalDelete :user="user" />
+    <ModalDelete :data="data" @alertFromChild="triggerAlert($event)" />
     <ModalAdd />
   </b-container>
 </template>
@@ -220,8 +219,13 @@ export default {
     openEdit(item) {
       this.data = item;
       if (this.data != {}) {
-        console.log(this.data);
         this.$bvModal.show("modalEdit");
+      }
+    },
+    openDelete(item) {
+      this.data = item;
+      if (this.data != {}) {
+        this.$bvModal.show("modalDelete");
       }
     },
     triggerAlert(payload) {

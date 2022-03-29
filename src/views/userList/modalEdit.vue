@@ -131,7 +131,7 @@ export default {
         } else {
           vm.$emit("alertFromChild", {
             msg: lodash.toUpper(editRes.data.message),
-            variant: "success",
+            variant: "danger",
             show: true,
           });
           vm.loading = false;

@@ -6,14 +6,14 @@
           <h2>Register Your Account</h2>
           <b-form-group
             id="email-input"
-            label="Email :"
-            label-for="email-input"
+            label="Username :"
+            label-for="username-input"
           >
             <b-form-input
-              id="email-input"
+              id="username-input"
               type="email"
-              placeholder="Email"
-              v-model="data.email"
+              placeholder="Username"
+              v-model="data.username"
             ></b-form-input>
           </b-form-group>
 
@@ -30,6 +30,24 @@
             ></b-form-input>
           </b-form-group>
 
+          <b-form-group label="Full Name :" label-for="name-input">
+            <b-form-input
+              id="name-input"
+              type="text"
+              placeholder="Full Name"
+              v-model="data.nama"
+            ></b-form-input>
+          </b-form-group>
+
+          <b-form-group label="Email :" label-for="email-input">
+            <b-form-input
+              id="email-input"
+              type="email"
+              placeholder="Email"
+              v-model="data.email"
+            ></b-form-input>
+          </b-form-group>
+
           <b-button :disabled="loading" variant="primary" @click="onRegis">
             <span v-if="!loading">Login</span>
             <Spinner v-else />
@@ -42,57 +60,87 @@
 </template>
 
 <script>
-import moment from "moment";
-import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
-
-const local = moment.locale("id");
+import axios from "@/baseURL";
+import lodash from "lodash";
+// import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
 
 export default {
   data() {
     return {
-      locale: local,
       loading: false,
       show: false,
       msg: "",
       variant: "",
       data: {
-        email: "",
+        username: "",
         password: "",
-        name: "",
-        dob: "",
+        nama: "",
+        email: "",
       },
     };
   },
   methods: {
-    onRegis() {
+    async onRegis() {
       let vm = this;
       vm.loading = true;
 
-      createUserWithEmailAndPassword(getAuth(), vm.data.email, vm.data.password)
-        .then((res) => {
-          if (res.user.accessToken) {
-            vm.variant = "success";
-            vm.msg = "Register Succeeded! You Will Be Redirected In 3 secs";
-            vm.show = true;
-            vm.loading = false;
+      try {
+        let regis = await axios.post("user/register", vm.data);
+        vm.loading = false;
 
-            setTimeout(() => {
-              vm.show = false;
-              vm.$router.push("/");
-            }, 3000);
-          }
-        })
-        .catch((err) => {
+        if (regis.data.message === "sukses") {
+          vm.variant = "success";
+          vm.msg = "Register Succeeded! You Will Be Redirected In 3 secs";
+          vm.show = true;
+          vm.loading = false;
+
+          setTimeout(() => {
+            vm.show = false;
+            vm.$router.push("/");
+          }, 3000);
+        } else {
           vm.variant = "danger";
-          vm.msg = err.message;
+          vm.msg = lodash.toUpper(regis.data.message);
           vm.show = true;
 
           setTimeout(() => {
             vm.show = false;
           }, 3000);
           vm.loading = false;
-        });
+        }
+      } catch (error) {
+        console.log(error);
+      }
     },
+    // onRegis() {
+    //   let vm = this;
+    //   vm.loading = true;
+
+    //   createUserWithEmailAndPassword(getAuth(), vm.data.email, vm.data.password)
+    //     .then((res) => {
+    //       if (res.user.accessToken) {
+    //         vm.variant = "success";
+    //         vm.msg = "Register Succeeded! You Will Be Redirected In 3 secs";
+    //         vm.show = true;
+    //         vm.loading = false;
+
+    //         setTimeout(() => {
+    //           vm.show = false;
+    //           vm.$router.push("/");
+    //         }, 3000);
+    //       }
+    //     })
+    //     .catch((err) => {
+    //       vm.variant = "danger";
+    //       vm.msg = err.message;
+    //       vm.show = true;
+
+    //       setTimeout(() => {
+    //         vm.show = false;
+    //       }, 3000);
+    //       vm.loading = false;
+    //     });
+    // },
   },
 };
 </script>
@@ -113,6 +161,6 @@ export default {
   width: 30%;
   left: 0;
   right: 0;
-  bottom: 25%;
+  bottom: 20%;
 }
 </style>

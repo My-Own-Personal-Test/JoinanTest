@@ -60,14 +60,26 @@ export default {
       let vm = this;
       vm.loading = true;
 
-      let postLogin = await axios.post("user/login", vm.data);
+      try {
+        let postLogin = await axios.post("user/login", vm.data);
 
-      if (postLogin.data.message === "sukses") {
+        if (postLogin.data.message === "sukses") {
+          vm.loading = false;
+          localStorage.setItem("token", postLogin.data.token);
+          vm.$router.push("/userLists");
+        } else {
+          vm.loading = false;
+          vm.msg = lodash.toUpper(postLogin.data.message);
+          vm.variant = "danger";
+          vm.show = true;
+
+          setTimeout(() => {
+            vm.show = false;
+          }, 3000);
+        }
+      } catch (error) {
         vm.loading = false;
-        vm.$router.push("/users/list");
-      } else {
-        vm.loading = false;
-        vm.msg = lodash.toUpper(postLogin.data.message);
+        vm.msg = "TERJADI GANGGUAN PADA SERVER! COBA BEBERAPA SAAT LAGI!";
         vm.variant = "danger";
         vm.show = true;
 

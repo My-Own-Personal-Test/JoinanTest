@@ -100,8 +100,10 @@
 import ModalEdit from "./modalEdit";
 import ModalDelete from "./modalDelete";
 import ModalAdd from "./modalAdd";
-import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
-const auth = getAuth();
+// import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
+// import {db} from '../../firebaseInit'
+
+// const auth = getAuth();
 
 const fields = [
   {
@@ -160,19 +162,20 @@ export default {
       filterOn: [],
       tableBusy: false,
       user: "",
-      isLoggedIn: false,
+      // isLoggedIn: false,
     };
   },
   mounted() {
     let vm = this;
 
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        vm.isLoggedIn = true;
-      } else {
-        vm.isLoggedIn = false;
-      }
-    });
+    // onAuthStateChanged(auth, (user) => {
+    //   if (user) {
+    //     vm.isLoggedIn = true;
+    //   } else {
+    //     vm.isLoggedIn = false;
+    //   }
+    // });
+    vm.getData();
   },
   methods: {
     onFiltered(filteredItems) {
@@ -180,12 +183,8 @@ export default {
       this.totalRows = filteredItems.length;
       this.currentPage = 1;
     },
-    logOut() {
-      signOut(auth).then(() => {
-        this.isLoggedIn = false;
-        this.$router.replace("/");
-      });
-    },
+    logOut() {},
+    async getData() {},
   },
 };
 </script>
